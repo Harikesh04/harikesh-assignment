@@ -15,7 +15,6 @@ const SelectOptions = ({ id, options }) => (
         {options.map((option) => (
           <option key={option.value} className="w-full" value={option.value}>
             {option.text}
-            <img src={option.img} className="w-7 h-7" alt="img" />
           </option>
         ))}
       </select>
