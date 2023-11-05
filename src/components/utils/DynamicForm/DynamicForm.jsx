@@ -1,41 +1,32 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "../Input/Input";
 import CalculatorResult from "../../home/CalculatorResult";
-
-function InvestmentType({ options, onChange, handleInvestmentType }) {
-  function handleClick(item) {
-    onChange(item.value);
-    handleInvestmentType(item.value);
-  }
-
-  return (
-    <div className="flex gap-3">
-      {options.map((item, index) => (
-        <div key={index} className="flex flex-col">
-          <div
-            className={`px-3 py-2 cursor-pointer border rounded-md ${
-              item.selected ? "bg-blue-50 text-blue-800 border-blue-800" : ""
-            }`}
-            onClick={() => handleClick(item)}
-          >
-            {item.text}
-          </div>
-          <span className="text-xs font-light">{item.desc}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
+import InvestmentType from "../../home/InvestmentType";
 
 const DynamicForm = ({ fields }) => {
   const [formState, setFormState] = useState({});
   const [taxRateAsPerAnnualIncome, setTaxRateAsPerAnnualIncome] =
     useState("0%");
+  const [taxPercentage, setTaxPercentage] = useState(0);
   const [investmentType, setInvestmentType] = useState("long");
+
+  function extractPercentage(expression) {
+    // Extracting the portion after '+' and before '%'
+    var percentageString = expression.split("+")[1].split("%")[0].trim();
+    // Parsing the extracted string to get the integer value
+    var percentage = parseFloat(percentageString);
+    return percentage;
+  }
 
   const handleInputChange = (fieldName, value) => {
     if (fieldName === "annualIncome") {
       setTaxRateAsPerAnnualIncome(value);
+      setFormState((prevState) => ({
+        ...prevState,
+        [fieldName]: value,
+      }));
+      const percentage = extractPercentage(value);
+      setTaxPercentage(percentage);
     } else if (fieldName === "investmentType") {
       const updatedOptions = fields
         .find((field) => field.name === "investmentType")
@@ -45,40 +36,40 @@ const DynamicForm = ({ fields }) => {
             selected: option.value === value,
           };
         });
-
       setFormState((prevState) => ({
         ...prevState,
         [fieldName]: value,
         investmentType: updatedOptions,
       }));
       setInvestmentType(value);
-    } else if (fieldName === "priceOfCrypto" || fieldName === "salePriceOfCrypto" || fieldName === "expenses") {
-      const priceOfCrypto = parseFloat(formState.priceOfCrypto) || 0;
-      const salePriceOfCrypto = parseFloat(formState.salePriceOfCrypto) || 0;
-      const expenses = parseFloat(formState.expenses) || 0;
-      const capitalGainAmount = priceOfCrypto - salePriceOfCrypto - expenses;
+    } else if (
+      ["priceOfCrypto", "salePriceOfCrypto", "expenses"].includes(fieldName)
+    ) {
       setFormState((prevState) => ({
         ...prevState,
         [fieldName]: value,
-        capitalGainAmount: capitalGainAmount >= 0 ? capitalGainAmount : 0,
       }));
-	  
     } else {
       setFormState((prevState) => ({ ...prevState, [fieldName]: value }));
     }
   };
 
   useEffect(() => {
-    const priceOfCrypto = parseFloat(formState.priceOfCrypto) || 0;
-    const salePriceOfCrypto = parseFloat(formState.salePriceOfCrypto) || 0;
-    const expenses = parseFloat(formState.expenses) || 0;
-    const capitalGainAmount = priceOfCrypto - salePriceOfCrypto - expenses;
+    const { priceOfCrypto, salePriceOfCrypto, expenses } = formState;
+    const capitalGainAmount = Math.max(
+      priceOfCrypto - salePriceOfCrypto - expenses,
+      0,
+    );
     setFormState((prevState) => ({
       ...prevState,
-      capitalGainAmount: capitalGainAmount >= 0 ? capitalGainAmount : 0,
-	  discountGain:capitalGainAmount>=0?capitalGainAmount/2:0,
+      capitalGainAmount: capitalGainAmount,
+      discountGain: capitalGainAmount / 2,
     }));
-  }, [formState.priceOfCrypto, formState.salePriceOfCrypto, formState.expenses]);
+  }, [
+    formState.priceOfCrypto,
+    formState.salePriceOfCrypto,
+    formState.expenses,
+  ]);
 
   const label =
     investmentType === "short"
@@ -90,7 +81,7 @@ const DynamicForm = ({ fields }) => {
       <div className="flex justify-between flex-wrap">
         {fields.map((field, index) => (
           <div key={index} className={`w-full mt-4 lg:w-[45%]`}>
-            <span >{field?.label || label}</span>
+            <span>{field?.label || label}</span>
             {field.type === "select" ? (
               <Input
                 inputType={"select"}
@@ -128,8 +119,10 @@ const DynamicForm = ({ fields }) => {
         ))}
       </div>
 
-	  <CalculatorResult />
-      
+      <CalculatorResult
+        netCapitalGain={formState["discountGain"]}
+        taxPercentage={taxPercentage}
+      />
     </form>
   );
 };

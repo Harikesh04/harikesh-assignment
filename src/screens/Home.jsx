@@ -1,4 +1,3 @@
-import React from "react";
 import TaxCalculatorHeader from "../components/home/TaxCalculatorHeader";
 import DynamicForm from "../components/utils/DynamicForm/DynamicForm";
 import { FormData } from "../constants/home/tax-calculator-static-data";

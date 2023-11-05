@@ -1,3 +1,5 @@
+import aus from "../../assets/aus.svg";
+
 export const taxCalculatorHeaderData = [
   {
     label: "Financial Year",
@@ -9,7 +11,7 @@ export const taxCalculatorHeaderData = [
     label: "Country",
     id: "country",
     name: "country",
-    options: [{ value: "Australia", text: "Australia" }],
+    options: [{ value: "Australia", text: "Australia", img: aus }],
   },
 ];
 export const FormData = [
@@ -39,8 +41,13 @@ export const FormData = [
     label: "Investment Type",
     type: "options",
     options: [
-      { value: "short", text: "Short Term", desc: "< 12 months",selected:false },
-      { value: "long", text: "Long Term", desc: "> 12 months" ,selected:true},
+      {
+        value: "short",
+        text: "Short Term",
+        desc: "< 12 months",
+        selected: false,
+      },
+      { value: "long", text: "Long Term", desc: "> 12 months", selected: true },
     ],
 
     required: true,
@@ -82,6 +89,5 @@ export const FormData = [
     type: "number",
     placeholder: "",
     name: "discountGain",
-    
   },
 ];

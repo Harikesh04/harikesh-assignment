@@ -7,12 +7,12 @@ export default {
         custom: ["Inter"],
       },
       colors: {
-        customGrey:"#EFF2F5",
-        customGreen:"#0FBA83",
-        customDarkBlue:"#0141CF",
+        customGrey: "#EFF2F5",
+        customGreen: "#0FBA83",
+        customDarkBlue: "#0141CF",
       },
       screens: {
-        'xs': '400px', // Defined custom breakpoint at 400px
+        xs: "400px", // Defined custom breakpoint at 400px
       },
     },
   },
