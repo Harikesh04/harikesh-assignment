@@ -2,7 +2,7 @@ import { taxCalculatorHeaderData } from "../../constants/home/tax-calculator-sta
 
 const SelectOptions = ({ id, options }) => (
   <div className="flex flex-col  xs:flex-row items-center gap-2 w-full  ">
-    <label className="font-normal	" htmlFor={id}>
+    <label className="font-normal whitespace-nowrap	" htmlFor={id}>
       {id}
     </label>
 
@@ -32,7 +32,7 @@ const TaxCalculatorHeader = () => {
       <div className="flex flex-col gap-3  sm:flex-row  mt-3  justify-between w-full ">
         {taxCalculatorHeaderData.map((item) => (
           <div key={item.id} className="lg:w-[45%] ">
-            <SelectOptions id={item.id} options={item.options} />
+            <SelectOptions id={item.label} options={item.options} />
           </div>
         ))}
       </div>
